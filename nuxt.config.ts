@@ -5,6 +5,12 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  app: {
+    head: {
+      title: "Visa Wizard",
+      link: [{ rel: "icon", type: "image/svg", href: "/favicon.svg" }],
+    },
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxt/eslint",
