@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  build: {
+    transpile: ["@vuepic/vue-datepicker"],
+  },
   app: {
     head: {
       title: "Visa Wizard",
