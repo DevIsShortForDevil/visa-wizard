@@ -8,6 +8,13 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@vuepic/vue-datepicker"],
   },
+  vite: {
+    ssr: {
+      // This forces Vite to bundle these directly into the server build
+      // so Vercel doesn't trip over legacy imports.
+      noExternal: ["vue", "@vuepic/vue-datepicker"],
+    },
+  },
   app: {
     head: {
       title: "Visa Wizard",
