@@ -1,0 +1,10 @@
+# .dockerignore
+node_modules
+.nuxt
+.output
+dist
+.env
+.git
+.gitignore
+README.md
+test/
