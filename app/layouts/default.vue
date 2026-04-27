@@ -17,7 +17,7 @@
     </header>
     <main class="w-full h-[calc(100vh-4.5rem)] flex bg-gray-50">
       <div
-        class="w-full h-auto overflow-y-auto py-4 px-11 [scrollbar-gutter:stable]"
+        class="w-full h-auto overflow-y-auto px-3 py-4 sm:px-5 md:px-11 [scrollbar-gutter:stable]"
       >
         <slot></slot>
       </div>
