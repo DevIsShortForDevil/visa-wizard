@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col h-screen w-screen min-w-[31.25rem]">
+  <div class="flex flex-col w-full min-w-[31.25rem]">
     <header
-      class="w-full h-[4.5rem] flex items-center flex-shrink-0 border-b border-gray-200 bg-white py-5.5 px-11 elevation-1"
+      class="sticky top-0 z-50 w-full h-[4.5rem] flex items-center border-b border-gray-200 bg-white py-5.5 px-11 shadow-sm"
     >
       <Icon
         name="tva:wizard"
@@ -15,18 +15,14 @@
         Visa Wizard
       </h1>
     </header>
-    <main class="w-full h-[calc(100vh-4.5rem)] flex bg-gray-50">
-      <div
-        class="w-full h-auto overflow-y-auto px-3 py-4 sm:px-5 md:px-11 [scrollbar-gutter:stable]"
-      >
-        <slot></slot>
-      </div>
+
+    <main class="w-full px-3 py-4 sm:px-5 md:px-11">
+      <slot></slot>
     </main>
   </div>
 </template>
 
 <script setup>
 const router = useRouter();
-
 const wizardStore = useWizardStore();
 </script>
