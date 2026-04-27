@@ -56,9 +56,9 @@ const getStatusConfig = (status: SubmissionStatus) => {
       <div
         v-for="(sub, index) in submissionStore.submissions"
         :key="index"
-        class="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-100 shadow-elevation-2"
+        class="flex flex-col md:flex-row md:items-center justify-between p-5 gap-4 md:gap-0 bg-white rounded-2xl border border-gray-100 shadow-elevation-2"
       >
-        <div class="flex items-center gap-5">
+        <div class="flex items-center gap-5 w-full md:w-auto">
           <div class="flex items-center">
             <img
               v-if="sub.citizenship?.flag"
@@ -108,7 +108,9 @@ const getStatusConfig = (status: SubmissionStatus) => {
           </div>
         </div>
 
-        <div class="flex items-center gap-12">
+        <div
+          class="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 md:gap-12"
+        >
           <div class="flex flex-col gap-0.5">
             <span class="text-body-xs font-normal text-gray-500"
               >Submitted</span
