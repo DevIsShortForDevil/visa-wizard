@@ -39,6 +39,9 @@ export default defineNuxtConfig({
     externals: {
       inline: ["fuse.js"],
     },
+    rollupConfig: {
+      external: ["vue"],
+    },
   },
 
   modules: [
