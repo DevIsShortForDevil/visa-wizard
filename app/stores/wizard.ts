@@ -1,5 +1,3 @@
-import type { WizardData } from "#shared/types/wizard";
-
 export const useWizardStore = defineStore("wizard", () => {
   // transition control
   const transitionDirection = ref<"slide-left" | "slide-right">("slide-left");

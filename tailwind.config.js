@@ -8,12 +8,15 @@ export default {
     "./app/layouts/**/*.vue",
     "./app/pages/**/*.vue",
     "./app/plugins/**/*.{js,ts}",
+    "./app/composables/**/*.{js,ts}",
+    "./app/utils/**/*.{js,ts}",
     "./app/app.vue",
     "./app/error.vue",
   ],
   theme: {
-    ...theme,
-    // Extend the default Tailwind theme here if needed
+    extend: {
+      ...theme, // My theme.
+    },
   },
   plugins: [],
 };

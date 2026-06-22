@@ -1,20 +1,70 @@
+<template>
+  <div class="jw-vw-identity-step">
+    <div class="jw-vw-identity-step-main">
+      <div class="jw-vw-identity-step-header">
+        <h2 class="text-heading-l-bold text-black">Personal Details</h2>
+        <p class="text-heading-xs text-black">
+          Please provide accurate information as it appears on your official
+          documents.
+        </p>
+      </div>
+
+      <div class="jw-vw-identity-step-content">
+        <BaseInput
+          v-model="data.fullName"
+          label="Full Name"
+          placeholder="John Snow"
+          :error="getError('fullName')"
+          @update:modelValue="validateField('fullName')"
+        />
+
+        <BaseInput
+          v-model="data.email"
+          type="email"
+          label="Email Address"
+          :error="getError('email')"
+          @update:modelValue="validateField('email')"
+        />
+
+        <PhoneInput
+          v-model:country="data.phoneCountry"
+          v-model:number="data.phoneNumber"
+          label="Phone Number"
+          :error="getError('phoneNumber') || getError('phoneCountry')"
+          @update:country="validateField('phoneCountry')"
+          @update:number="validateField('phoneNumber')"
+        />
+
+        <DatePicker
+          v-model="data.dob"
+          label="Date of Birth"
+          :error="getError('dob')"
+          @update:modelValue="validateField('dob')"
+        />
+
+        <div class="md:col-span-1">
+          <BaseInput
+            v-model="data.passportNumber"
+            label="Passport Number"
+            :error="getError('passportNumber')"
+            @update:modelValue="validateField('passportNumber')"
+          />
+        </div>
+      </div>
+    </div>
+    <StepFooter @next="submitStep" @back="emit('back')" />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { z } from "zod";
-import BaseInput from "./components/BaseInput.vue";
-import PhoneInput from "./components/PhoneInput.vue";
-import DatePicker from "./components/DatePicker.vue";
-import StepFooter from "./components/StepFooter.vue";
-
-const props = defineProps({
-  countries: {
-    type: Array as () => CountryOption[],
-    required: true,
-  },
-});
+import BaseInput from "@/components/wizard/steps/components/BaseInput.vue";
+import PhoneInput from "@/components/wizard/steps/components/PhoneInput.vue";
+import DatePicker from "@/components/wizard/steps/components/DatePicker.vue";
+import StepFooter from "@/components/wizard/steps/components/StepFooter.vue";
 
 const emit = defineEmits(["next", "back"]);
 
-// Assuming you have your wizardStore setup globally/auto-imported
 const wizardStore = useWizardStore();
 
 // 1. Validation Schema
@@ -22,12 +72,7 @@ const schema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.email("Invalid email address"),
   phoneCountry: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      flag: z.string(),
-      phoneCode: z.string(),
-    })
+    .custom<CountryOption>()
     .nullable()
     .refine((val) => val !== null, { message: "Country code is required" }),
   phoneNumber: z
@@ -55,17 +100,10 @@ const initialValue = {
   passportNumber: wizardStore.data?.passportNumber || "",
 };
 
-const { data, errors, touched, validate, validateField } = useZodForm(
+const { data, getError, validate, validateField } = useZodForm(
   schema,
   initialValue,
 );
-
-// Helper to get error message for a field
-const getError = (field: keyof typeof data) => {
-  if (!touched[field]) return "";
-  const err = errors.value[field];
-  return Array.isArray(err) ? err[0] : err;
-};
 
 // 3. Submission
 const submitStep = () => {
@@ -76,61 +114,20 @@ const submitStep = () => {
 };
 </script>
 
-<template>
-  <div class="bg-white rounded-b-2xl shadow-sm">
-    <div class="flex flex-col gap-10 px-7 py-11">
-      <div class="flex flex-col gap-1.5">
-        <h2 class="text-heading-l-bold text-black">Personal Details</h2>
-        <p class="text-heading-xs text-black">
-          Please provide accurate information as it appears on your official
-          documents.
-        </p>
-      </div>
+<style lang="scss" scoped>
+.jw-vw-identity-step {
+  @apply bg-white rounded-b-2xl shadow-sm;
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8">
-        <BaseInput
-          v-model="data.fullName"
-          @update:modelValue="validateField('fullName')"
-          label="Full Name"
-          placeholder="John Snow"
-          :error="getError('fullName')"
-        />
+  .jw-vw-identity-step-main {
+    @apply flex flex-col gap-10 px-4 xs:px-7 py-11;
+  }
 
-        <BaseInput
-          v-model="data.email"
-          @update:modelValue="validateField('email')"
-          type="email"
-          label="Email Address"
-          :error="getError('email')"
-        />
+  .jw-vw-identity-step-header {
+    @apply flex flex-col gap-1.5;
+  }
 
-        <PhoneInput
-          v-model:country="data.phoneCountry"
-          v-model:number="data.phoneNumber"
-          @update:country="validateField('phoneCountry')"
-          @update:number="validateField('phoneNumber')"
-          :countries="props.countries"
-          label="Phone Number"
-          :error="getError('phoneNumber') || getError('phoneCountry')"
-        />
-
-        <DatePicker
-          v-model="data.dob"
-          @update:modelValue="validateField('dob')"
-          label="Date of Birth"
-          :error="getError('dob')"
-        />
-
-        <div class="md:col-span-1">
-          <BaseInput
-            v-model="data.passportNumber"
-            @update:modelValue="validateField('passportNumber')"
-            label="Passport Number"
-            :error="getError('passportNumber')"
-          />
-        </div>
-      </div>
-    </div>
-    <StepFooter @next="submitStep" @back="emit('back')" />
-  </div>
-</template>
+  .jw-vw-identity-step-content {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4;
+  }
+}
+</style>

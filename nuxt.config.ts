@@ -1,10 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   future: {
     compatibilityVersion: 4,
   },
+
   build: {
     transpile: ["@vuepic/vue-datepicker"],
   },
@@ -12,24 +13,44 @@ export default defineNuxtConfig({
     ssr: {
       // This forces Vite to bundle these directly into the server build
       // so Vercel doesn't trip over legacy imports.
-      noExternal: ["vue", "@vuepic/vue-datepicker"],
+      noExternal: ["@vuepic/vue-datepicker"],
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true,
+          silenceDeprecations: ["legacy-js-api"],
+        },
+      },
     },
   },
   app: {
     head: {
-      title: "Visa Wizard",
+      title: "JW-Visa-Wizard",
       link: [{ rel: "icon", type: "image/svg", href: "/favicon.svg" }],
     },
   },
+  runtimeConfig: {
+    apiKey: process.env.API_KEY,
+    baseUrl: process.env.BASE_URL,
+  },
+
+  nitro: {
+    externals: {
+      inline: ["fuse.js"],
+    },
+  },
+
   modules: [
-    "@nuxtjs/tailwindcss",
     "@nuxt/eslint",
+    "@nuxt/icon",
+    "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
-    "@nuxt/test-utils",
-    "@nuxt/icon",
-    "@nuxt/test-utils/module",
   ],
+
+  css: ["./app/assets/styles/global.scss"],
+
   icon: {
     customCollections: [
       {

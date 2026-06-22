@@ -1,5 +1,3 @@
-import { type Submission } from "#shared/types/submission";
-
 export const useSubmissionStore = defineStore(
   "submissions",
   () => {

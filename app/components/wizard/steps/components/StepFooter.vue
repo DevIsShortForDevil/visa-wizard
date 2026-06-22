@@ -1,23 +1,14 @@
-<script setup lang="ts">
-import { render } from "vue";
-
-const props = defineProps({
-  nextTitle: { type: String, default: "Continue" },
-  renderBack: { type: Boolean, default: true },
-});
-const emit = defineEmits(["next", "back"]);
-</script>
 <template>
   <div
     :class="[
-      'flex items-center pt-6 px-7 pb-11 border-t border-gray-100',
+      'jw-vw-step-footer',
       renderBack ? 'justify-between' : 'justify-end',
     ]"
   >
     <button
       v-if="renderBack"
       @click="emit('back')"
-      class="flex items-center justify-center w-12 h-12 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors text-black"
+      class="jw-vw-step-footer-back-button"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -35,10 +26,7 @@ const emit = defineEmits(["next", "back"]);
       </svg>
     </button>
 
-    <button
-      @click="emit('next')"
-      class="flex items-center gap-2 px-4 py-3 bg-primary-600 hover:bg-primary-700 transition-colors text-white text-btn-s rounded-full"
-    >
+    <button @click="emit('next')" class="jw-vw-step-footer-next-button">
       {{ nextTitle }}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -53,3 +41,24 @@ const emit = defineEmits(["next", "back"]);
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+const { nextTitle = "Continue", renderBack = true } = defineProps<{
+  nextTitle?: string;
+  renderBack?: boolean;
+}>();
+const emit = defineEmits(["next", "back"]);
+</script>
+<style lang="scss" scoped>
+.jw-vw-step-footer {
+  @apply flex items-center py-4 px-4 xs:px-7 border-t border-gray-100;
+
+  .jw-vw-step-footer-back-button {
+    @apply flex items-center justify-center w-12 h-12 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors text-black;
+  }
+
+  .jw-vw-step-footer-next-button {
+    @apply flex items-center gap-2 px-4 py-3 bg-primary-600 hover:bg-primary-700 transition-colors text-white text-btn-s rounded-full;
+  }
+}
+</style>

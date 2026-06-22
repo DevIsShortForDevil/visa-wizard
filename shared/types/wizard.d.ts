@@ -1,6 +1,4 @@
-import type { CountryOption } from "#shared/types/country";
-
-export interface WizardData {
+interface WizardData {
   citizenship: CountryOption | null;
   destination: CountryOption | null;
   fullName: string | null;

@@ -1,10 +1,38 @@
-# .dockerignore
+# Dependencies — Docker installs these fresh in the build stage
 node_modules
+
+# Nuxt build artifacts — rebuilt inside Docker
 .nuxt
 .output
-dist
+
+# Development and test files — not needed in production
+test
+coverage
+*.test.ts
+*.spec.ts
+
+# Environment files — secrets should be passed at runtime, never baked in
 .env
+.env.*
+!.env.example
+
+# Version control
 .git
 .gitignore
-README.md
-test/
+
+# Editor config
+.vscode
+.idea
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,98 +1,36 @@
-<script setup lang="ts">
-import { z } from "zod";
-import CountrySelect from "./components/CountrySelect.vue";
-import StepFooter from "./components/StepFooter.vue";
-
-const props = defineProps({
-  countries: {
-    type: Array as () => CountryOption[],
-    required: true,
-  },
-});
-
-const emit = defineEmits(["next", "back"]);
-
-const wizardStore = useWizardStore();
-
-// Validation Schema
-const countrySchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  flag: z.string(),
-  phoneCode: z.string(),
-});
-
-// Define the main schema for the step
-const schema = z.object({
-  citizenship: countrySchema
-    .nullable()
-    .refine((val) => val !== null, { message: "Citizenship is required" }),
-  destination: countrySchema
-    .nullable()
-    .refine((val) => val !== null, { message: "Destination is required" }),
-});
-
-const initialValue: {
-  citizenship: CountryOption | null;
-  destination: CountryOption | null;
-} = {
-  citizenship: wizardStore.data?.citizenship || null,
-  destination: wizardStore.data?.destination || null,
-};
-
-// Initialize Zod Form
-const { data, errors, touched, validate, validateField } = useZodForm(
-  schema,
-  initialValue,
-);
-
-// Helper to get error message for a field
-const getError = (field: keyof typeof data) => {
-  if (!touched[field]) return "";
-  const err = errors.value[field];
-  return Array.isArray(err) ? err[0] : err;
-};
-
-// Submission
-const submitStep = () => {
-  if (validate()) {
-    wizardStore.updateData(data);
-    emit("next", data);
-  }
-};
-</script>
-
 <template>
-  <div class="bg-white rounded-b-2xl shadow-sm">
-    <div class="flex flex-col gap-10 px-7 py-11">
-      <div class="flex flex-col gap-1.5">
-        <h2 class="text-heading-l-bold text-black">Select your journey</h2>
-        <p class="text-heading-xs text-black">
+  <div class="jw-vw-geography-step">
+    <div class="jw-vw-geography-step-main">
+      <div class="jw-vw-geography-step-main-header">
+        <h2 class="jw-vw-geography-step-main-header-title">
+          Select your journey
+        </h2>
+        <p class="jw-vw-geography-step-main-header-subtitle">
           Define your origin and destination to begin the application process.
         </p>
       </div>
 
-      <div class="w-full flex flex-col gap-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="jw-vw-geography-step-main-body">
+        <div class="jw-vw-geography-step-main-body-fields">
           <CountrySelect
             v-model="data.citizenship"
-            @update:modelValue="validateField('citizenship')"
-            :countries="props.countries"
             :exclude="data.destination"
             label="Citizenship"
             :error="getError('citizenship')"
+            @update:modelValue="validateField('citizenship')"
           />
 
           <CountrySelect
             v-model="data.destination"
-            @update:modelValue="validateField('destination')"
-            :countries="props.countries"
             :exclude="data.citizenship"
             label="Destination"
             :error="getError('destination')"
+            @update:modelValue="validateField('destination')"
           />
         </div>
-        <div class="w-full h-[3.8125rem]">
+
+        <!-- Route Preview -->
+        <div class="jw-vw-geography-step-main-body-route">
           <transition
             enter-active-class="transition duration-400 ease-out"
             enter-from-class="opacity-0 translate-y-2"
@@ -103,28 +41,29 @@ const submitStep = () => {
           >
             <div
               v-if="data.citizenship && data.destination"
-              class="h-full flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl"
+              class="jw-vw-geography-step-main-body-route-content"
             >
               <div class="flex items-center gap-4">
                 <div class="flex items-center">
                   <img
                     :src="data.citizenship.flag"
                     alt="Origin Flag"
-                    class="relative z-8 w-7 h-7 object-cover rounded-full border-2 border-white shadow-sm shrink-0"
+                    class="jw-vw-geography-step-main-body-route-content-flag"
                   />
                   <img
                     :src="data.destination.flag"
                     alt="Destination Flag"
-                    class="relative z-9 w-7 h-7 object-cover rounded-full border-2 border-white shadow-sm shrink-0 -ml-2.5"
+                    class="jw-vw-geography-step-main-body-route-content-flag -ml-2.5"
                   />
                 </div>
 
                 <div class="flex flex-col">
-                  <span class="text-body-xs font-normal text-gray-700"
+                  <span
+                    class="jw-vw-geography-step-main-body-route-content-title"
                     >Route Validated</span
                   >
                   <div
-                    class="flex items-center gap-2 text-body-m-bold text-black"
+                    class="jw-vw-geography-step-main-body-route-content-summary"
                   >
                     <span>{{ data.citizenship.name }}</span>
                     <svg
@@ -146,9 +85,7 @@ const submitStep = () => {
                 </div>
               </div>
 
-              <div
-                class="flex items-center justify-center w-6 h-6 bg-[#00c853] rounded-full shrink-0 shadow-sm"
-              >
+              <div class="jw-vw-geography-step-main-body-route-content-valid">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="w-4 h-4 text-white"
@@ -170,3 +107,103 @@ const submitStep = () => {
     <StepFooter :render-back="false" @next="submitStep" />
   </div>
 </template>
+
+<script setup lang="ts">
+import CountrySelect from "@/components/wizard/steps/components/CountrySelect.vue";
+import StepFooter from "@/components/wizard/steps/components/StepFooter.vue";
+
+import { z } from "zod";
+
+const emit = defineEmits(["next", "back"]);
+
+const wizardStore = useWizardStore();
+
+// Define the main schema for the step
+// z.custom<CountryOption>() is used to ensure that the value is of type CountryOption
+const schema = z.object({
+  citizenship: z
+    .custom<CountryOption>()
+    .nullable()
+    .refine((val) => val !== null, { message: "Citizenship is required" }),
+  destination: z
+    .custom<CountryOption>()
+    .nullable()
+    .refine((val) => val !== null, { message: "Destination is required" }),
+});
+
+const initialValue: {
+  citizenship: CountryOption | null;
+  destination: CountryOption | null;
+} = {
+  citizenship: wizardStore.data?.citizenship || null,
+  destination: wizardStore.data?.destination || null,
+};
+
+// Initialize Zod Form
+const { data, getError, validate, validateField } = useZodForm(
+  schema,
+  initialValue,
+);
+
+// Submission
+const submitStep = () => {
+  if (validate()) {
+    wizardStore.updateData(data);
+    emit("next", data);
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.jw-vw-geography-step {
+  @apply bg-white rounded-b-2xl shadow-sm;
+
+  .jw-vw-geography-step-main {
+    @apply flex flex-col gap-10 px-4 xs:px-7 py-11;
+
+    .jw-vw-geography-step-main-header {
+      @apply flex flex-col gap-1.5;
+
+      .jw-vw-geography-step-main-header-title {
+        @apply text-heading-l-bold text-black;
+      }
+
+      .jw-vw-geography-step-main-header-subtitle {
+        @apply text-heading-xs text-black;
+      }
+    }
+
+    .jw-vw-geography-step-main-body {
+      @apply w-full flex flex-col gap-3;
+
+      .jw-vw-geography-step-main-body-fields {
+        @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+      }
+
+      .jw-vw-geography-step-main-body-route {
+        @apply w-full min-h-[3.8125rem];
+
+        .jw-vw-geography-step-main-body-route-content {
+          @apply h-full flex items-center justify-between px-1 md:px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl;
+
+          .jw-vw-geography-step-main-body-route-content-flag {
+            @apply relative z-10 min-w-7 min-h-7 w-7 h-7 object-cover rounded-full border-2 border-white shadow-sm shrink-0;
+          }
+
+          .jw-vw-geography-step-main-body-route-content-title {
+            @apply text-body-xs font-normal text-gray-700;
+          }
+
+          .jw-vw-geography-step-main-body-route-content-summary {
+            @apply flex items-center gap-2 text-body-m-bold text-black;
+          }
+
+          .jw-vw-geography-step-main-body-route-content-valid {
+            @apply flex items-center justify-center w-6 h-6 bg-success-400 rounded-full shrink-0 shadow-sm;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

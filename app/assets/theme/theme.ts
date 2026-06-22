@@ -2,6 +2,10 @@ export const theme = {
   fontFamily: {
     sans: ['"Plus Jakarta Sans"', "sans-serif"],
   },
+  screens: {
+    xs: "500px",
+    xxs: "400px",
+  },
   colors: {
     gray: {
       25: "#fcfcfc",
