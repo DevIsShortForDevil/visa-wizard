@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     ssr: {
       // This forces Vite to bundle these directly into the server build
       // so Vercel doesn't trip over legacy imports.
-      noExternal: ["@vuepic/vue-datepicker"],
+      noExternal: ["@vuepic/vue-datepicker", "vue", "vue-router"],
     },
     css: {
       preprocessorOptions: {
